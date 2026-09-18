@@ -38,6 +38,7 @@ Uma LLM ou pessoa desenvolvedora não pode inventar livremente uma segunda lingu
 - `public/modules/relatorios/index.php`: referência enxuta para consultas e páginas de BI;
 - `public/modules/exemplos/padroes.php`: referência de composição visual, não de persistência;
 - `public/modules/exemplos/estados.php`: referência dos estados visuais;
+- `public/login.php`, `recuperar-senha.php`, `redefinir-senha.php` e `acesso-indisponivel.php`: referência do shell público de autenticação;
 - `public/assets/app.css` e `public/assets/app.js`: implementação global dos componentes e interações.
 
 Antes de criar interface, seguir esta ordem:
@@ -66,11 +67,19 @@ app/
   data/mock.php                dados demonstrativos
   layout/menu.php              shell, topbar e menu lateral
   layout/footer.php            fechamento do shell e JavaScript
+  layout/auth_header.php       abertura do shell público de autenticação
+  layout/auth_footer.php       fechamento do shell público
+  layout/theme.php             tema e identidade compartilhados pelos shells
 public/
   assets/app.css               estilos e componentes globais
   assets/app.js                comportamento global
+  assets/auth.js               comportamento do kit visual de autenticação
   modules/                     módulos e suas páginas
   index.php                    entrada principal
+  login.php                    entrada visual demonstrativa
+  recuperar-senha.php          solicitação visual de recuperação
+  redefinir-senha.php          nova senha e estados do link
+  acesso-indisponivel.php      conta bloqueada ou inativa
   perfil.php                   perfil demonstrativo
 docs/                          desenvolvimento e instalação de referência
 ```
@@ -86,6 +95,7 @@ Somente `public/` deve ser exposto pelo servidor web.
 - Reabertura do menu no nível da página ativa.
 - Topbar fixa com identidade compacta do sistema; rolagem somente na área abaixo dela.
 - Perfil e troca de senha apenas demonstrativos.
+- Shell público com login, recuperação, redefinição e acesso indisponível, todos demonstrativos.
 - Loader global configurável e loader local por JavaScript.
 - Catálogo de componentes, padrões, estados e CRUD demonstrativo.
 - Dados mock sem persistência; CRUD valida no PHP e mantém registros somente na memória da aba.
@@ -106,7 +116,7 @@ Somente `public/` deve ser exposto pelo servidor web.
 - presença dos módulos demonstrativos;
 - aparência e duração mínima do loader global.
 
-Não manter opções sem consumidor implementado. Sessão, login e suporte são decisões futuras, não configurações ativas. O idioma da interface atual é português; não existe internacionalização.
+Não manter opções sem consumidor implementado. Sessão, autenticação real e suporte são decisões futuras, não configurações ativas. O idioma da interface atual é português; não existe internacionalização.
 
 Logo, favicon e imagem do loader devem ficar dentro de `public/` e usar caminho relativo. URLs externas são bloqueadas intencionalmente.
 
@@ -155,9 +165,22 @@ Credenciais do banco são lidas por `getenv()` em `app/config/database.php`. O a
 - Operações de escrita futuras devem ter autenticação, autorização, validação no servidor e proteção CSRF.
 - O menu oculto não é autorização. Toda página protegida deve validar acesso no servidor.
 
-## Autenticação e autorização planejadas
+## Autenticação visual e implementação futura
 
-Autenticação, usuários reais, recuperação de senha e autorização ainda não estão implementados. O perfil atual é apenas visual.
+O kit visual de autenticação está implementado, mas não autentica usuários, não cria sessão, não envia e-mail e não grava senha ou token. Ele define apenas o shell público, formulários, navegação e estados previsíveis. O perfil também permanece demonstrativo.
+
+Ao conectar um produto real:
+
+- escolher conscientemente entre `NM_LOGIN`, e-mail validado, ambos ou um provedor SSO;
+- processar credenciais, recuperação e logout antes de emitir HTML;
+- usar `password_hash()` e `password_verify()` quando houver senha local;
+- regenerar a sessão após autenticar e configurar cookies `HttpOnly`, `Secure` e `SameSite`;
+- proteger mutações com CSRF, autorização no servidor e limitação de tentativas;
+- responder recuperação de forma genérica, sem confirmar a existência da conta;
+- gerar token aleatório, armazenar somente seu hash, expirar rapidamente e invalidar após o uso;
+- nunca registrar senha, token de recuperação ou credencial nos logs.
+
+As páginas `redefinir-senha.php?estado=expirado`, `?estado=invalido`, `acesso-indisponivel.php?motivo=bloqueado` e `?motivo=inativo` são somente estados visuais. Parâmetros de URL não podem decidir segurança em uma implementação real.
 
 O modelo planejado é granular: uma página pode ser liberada para vários usuários e um usuário pode receber várias páginas. A existência da permissão concede acesso; a ausência bloqueia.
 
@@ -196,7 +219,7 @@ ADM_USUARIO
 
 `TP_USUARIO = 1` está reservado conceitualmente ao administrador global da plataforma. Os demais tipos ainda não foram fechados e não devem ser inventados silenciosamente.
 
-Ainda não foi decidido se a autenticação usará exclusivamente `NM_LOGIN`, e-mail validado ou ambos. Sistemas internos podem preferir `NM_LOGIN`; um SaaS pode exigir e-mail validado. Essa decisão deve ser tomada antes da implementação do login.
+Ainda não foi decidido se a autenticação real usará exclusivamente `NM_LOGIN`, e-mail validado ou ambos. Sistemas internos podem preferir `NM_LOGIN`; um SaaS pode exigir e-mail validado. O rótulo visual “Login ou e-mail” é neutro e deve ser adaptado quando essa decisão for tomada.
 
 Quando forem criados mocks de autenticação e permissão, usar nomes próximos das futuras colunas do banco. Não renomear mocks existentes fora do escopo apenas para antecipar essa mudança.
 

@@ -11,6 +11,7 @@ Leia primeiro `AGENTS.md`. Este documento é a receita do starter independente e
 | Classes visuais e seleção múltipla funcional | `public/modules/exemplos/componentes.php` |
 | Composição visual, não operação implementada | `public/modules/exemplos/padroes.php` |
 | Estados visuais, não bloqueio de segurança | `public/modules/exemplos/estados.php` |
+| Login, recuperação e estados públicos | `public/login.php` e demais páginas públicas de autenticação |
 
 O CRUD é um exemplo funcional de interface, **não um backend de persistência**. Seu POST apenas valida dados e responde JSON; os registros vivem na aba. Antes de ligá-lo ao banco, defina autenticação, autorização por operação, CSRF, validação e transações. Não copie o ramo de mock como se ele salvasse registros.
 
@@ -43,8 +44,11 @@ Não crie “só mais uma versão” de componente porque o formato visual parec
 | Ações secundárias | `row-menu-button` com três pontos verticais e `row-menu` |
 | Espera | loader global ou `NextNavLoader.setLocal()` |
 | Navegação e conta | shell de `app/layout/menu.php`; não duplicar por módulo |
+| Autenticação visual | shell de `app/layout/auth_header.php` e páginas públicas correspondentes |
 
 Este inventário descreve famílias de componentes. O markup funcional e atualizado deve ser consultado nas páginas de referência, não reconstruído apenas pelo nome da classe.
+
+Shells completos, como o sistema autenticado e a autenticação pública, são demonstrados pelas próprias páginas de referência em vez de serem incorporados dentro do catálogo de componentes.
 
 ### Gate para componente global novo
 
@@ -148,6 +152,17 @@ No primeiro acesso direto, nenhum loader HTML pode aparecer antes de o servidor 
 
 A implementação completa está no CRUD. A opção “Simular falha do servidor” permite conferir erro, preservação de campos e encerramento do loader sem provocar falha real.
 
+### Kit visual de autenticação
+
+- `login.php` demonstra identificador neutro e senha, sem validar credenciais nem criar sessão.
+- `recuperar-senha.php` sempre apresenta resposta genérica para não enumerar contas.
+- `redefinir-senha.php` demonstra nova senha e os estados `expirado` e `invalido`; não existe token real.
+- `acesso-indisponivel.php` demonstra conta `bloqueado` ou `inativo`; a URL não aplica bloqueio real.
+- `auth_header.php` e `auth_footer.php` formam o shell público sem menu, topbar de conta ou conteúdo autenticado.
+- `auth.js` controla somente tema, visualização de senha e respostas dos formulários mock.
+
+Não use os formulários mock como endpoint real. Ao implementar, mantenha respostas genéricas, validação no servidor, limitação de tentativas, CSRF onde aplicável, sessão regenerada e tokens de recuperação aleatórios, temporários, de uso único e armazenados somente como hash. SSO, login corporativo e e-mail validado são alternativas de produto; não mantenha campos de senha se o provedor escolhido não os utilizar.
+
 ### Tabs e ações por linha
 
 Tabs usam `data-tabs`, `role="tablist"`, botões `role="tab" data-tab="id-do-painel"` e painéis `class="tab-panel" id="..."`. IDs devem ser únicos; o shell sincroniza ARIA, foco, setas, Home e End.
@@ -170,6 +185,7 @@ Ações principais visíveis, como “Novo registro” e “Salvar”, continuam
 10. Ao trocar configuração: logo/cor/tema, loader desligado, armazenamento do navegador indisponível e remoção de demos sem esconder módulos reais.
 11. Publicação: executar também o checklist de `INSTALACAO.md`. Registrar o que foi executado e o que permanece sem validação.
 12. Conferir que nenhum componente existente foi recriado e que toda novidade global foi adicionada ao catálogo e à documentação.
+13. Na autenticação visual, testar login, recuperação, redefinição, link inválido/expirado, bloqueado/inativo, mostrar senha, tema e funcionamento sem JavaScript; não afirmar que houve autenticação real.
 
 ## Módulo de verificação
 

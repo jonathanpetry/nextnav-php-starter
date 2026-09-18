@@ -2,7 +2,7 @@
 
 Base enxuta para iniciar BI interno, intranet ou um produto que futuramente seja SaaS. PHP procedural, HTML, CSS e JavaScript nativo, sem framework, Composer ou etapa de build.
 
-Entrega identidade configurável, shell responsivo, navegação em níveis, temas, loaders e componentes. **Não entrega autenticação, permissões, tenancy ou persistência.** Os exemplos usam dados fictícios; não cadastre informações reais.
+Entrega identidade configurável, shell responsivo, navegação em níveis, temas, loaders, componentes e um kit visual de autenticação. **Não entrega autenticação real, permissões, tenancy ou persistência.** Os exemplos usam dados fictícios; não cadastre informações reais.
 
 ## Começar
 
@@ -16,6 +16,7 @@ php -S 127.0.0.1:8080 -t public
 
 4. Acesse `http://127.0.0.1:8080`.
 5. Abra Exemplos → Componentes e CRUD demonstrativo; consulte também Relatórios.
+6. Acesse `http://127.0.0.1:8080/login.php` para conferir o kit visual de autenticação.
 
 Requisitos: PHP 8.3+ mantido/atualizado, navegador moderno com `dialog`, `inert`, Popover API e CSS `color-mix()`. A conferência local usa PHP 8.3.12; a instalação de referência usa PHP 8.4. PDO e seu driver são necessários somente ao conectar um banco. O PHP embutido não é servidor de produção.
 
@@ -37,15 +38,23 @@ app/
   config/database.php       variáveis de ambiente do banco
   database/connection.php   PDO sob demanda
   data/mock.php             dados fictícios
+  layout/auth_header.php    abertura do shell público
+  layout/auth_footer.php    fechamento do shell público
   layout/menu.php           abertura do shell, navegação e topbar
   layout/footer.php         fechamento do shell e JavaScript global
+  layout/theme.php          tema e identidade compartilhados
 public/
   assets/app.css            tokens e componentes visuais
   assets/app.js             comportamento dos componentes
+  assets/auth.js            comportamento visual da autenticação
   modules/clientes/        listagem demonstrativa
   modules/exemplos/        catálogo e CRUD-modelo
   modules/relatorios/      módulo pequeno de consulta com filtros GET
   index.php                 início
+  login.php                 login demonstrativo
+  recuperar-senha.php       recuperação demonstrativa
+  redefinir-senha.php       redefinição e estados de link
+  acesso-indisponivel.php   estados bloqueado e inativo
   perfil.php                perfil e senha apenas demonstrativos
 docs/                       desenvolvimento e instalação
 environment.example         nomes das variáveis; não é carregado
@@ -79,6 +88,12 @@ $pdo = require APP_PATH . '/database/connection.php';
 Utilize consultas preparadas e transações quando houver escritas dependentes. Abrir a conexão não implementa autorização, CSRF nem regras de negócio.
 
 O CRUD valida requisições no PHP e mantém os resultados somente na memória da aba. Recarregar restaura os dados iniciais. Relatórios demonstra filtros GET validados, indicadores, saída escapada e estado vazio sem JavaScript específico.
+
+## Autenticação visual
+
+O starter inclui telas responsivas para entrar, recuperar e redefinir senha, além de link expirado/inválido e conta bloqueada/inativa. Elas reutilizam identidade, cores, tema, campos, botões e alertas. Os formulários apenas demonstram o fluxo: não consultam usuário, não enviam e-mail, não validam token, não criam sessão e não armazenam senha.
+
+Um produto real deve escolher login, e-mail ou SSO e então implementar autenticação, autorização no servidor, política de sessão, limitação de tentativas, CSRF e recuperação segura. As regras obrigatórias estão em [AGENTS.md](AGENTS.md) e o contrato visual em [Desenvolvimento](docs/DESENVOLVIMENTO.md).
 
 ## Loader
 

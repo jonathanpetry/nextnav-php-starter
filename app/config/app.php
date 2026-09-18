@@ -26,7 +26,7 @@ return [
             'primary' => '#262A24',
             'secondary' => '#D6F05A',
             'dark_primary' => '#F4F3ED',
-            'dark_secondary' => '#D6F05A',
+            'dark_secondary' => '#5F6D00',
         ],
     ],
 
