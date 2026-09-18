@@ -1,0 +1,23 @@
+# Configuração local e credenciais
+.env
+.env.*
+!.env.example
+
+# Dependências e ferramentas opcionais
+/vendor/
+/node_modules/
+/.phpunit.cache/
+/coverage/
+
+# Arquivos gerados pela aplicação
+/storage/
+*.log
+
+# Editor e sistema operacional
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo

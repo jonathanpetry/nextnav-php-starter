@@ -1,0 +1,9 @@
+# Referência: este arquivo NÃO é carregado pelo PHP.
+# Configure as variáveis no serviço PHP-FPM/IIS ou no ambiente do processo.
+# Veja docs/INSTALACAO.md. Não salve credenciais reais neste projeto.
+APP_ENV=production
+
+# Os mocks funcionam sem banco. Preencha apenas ao implementar dados reais.
+DB_DSN=
+DB_USERNAME=
+DB_PASSWORD=
