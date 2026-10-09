@@ -438,6 +438,261 @@ document.addEventListener('keydown', event => {
 window.addEventListener('resize', () => document.querySelectorAll('.row-menu:popover-open').forEach(popup => popup.hidePopover()));
 window.addEventListener('scroll', event => document.querySelectorAll('.row-menu:popover-open').forEach(popup => { if (!popup.contains(event.target)) popup.hidePopover(); }), true);
 
+const tabulatorDemo = document.querySelector('[data-tabulator-demo]');
+if (tabulatorDemo) {
+    const tableElement = tabulatorDemo.querySelector('#catalog-tabulator');
+    const fallback = tabulatorDemo.querySelector('[data-tabulator-fallback]');
+
+    if (tableElement && typeof window.Tabulator === 'function') {
+        const tableData = [
+            { id: 1042, colaborador: 'Aline Ribeiro', area: 'Produto Digital', situacao: 'Em andamento', atualizacao: '2026-10-09' },
+            { id: 1041, colaborador: 'Bianca Martins', area: 'Tecnologia', situacao: 'Concluída', atualizacao: '2026-10-08' },
+            { id: 1040, colaborador: 'Bruno Teixeira', area: 'Pessoas', situacao: 'Pendente', atualizacao: '2026-10-08' },
+            { id: 1039, colaborador: 'Caio Fernandes', area: 'Operações', situacao: 'Em andamento', atualizacao: '2026-10-07' },
+            { id: 1038, colaborador: 'Camila Rocha', area: 'Pessoas', situacao: 'Concluída', atualizacao: '2026-10-07' },
+            { id: 1037, colaborador: 'Diego Alves', area: 'Tecnologia', situacao: 'Pendente', atualizacao: '2026-10-06' },
+            { id: 1036, colaborador: 'Felipe Nunes', area: 'Produto Digital', situacao: 'Em andamento', atualizacao: '2026-10-06' },
+            { id: 1035, colaborador: 'Helena Costa', area: 'Operações', situacao: 'Concluída', atualizacao: '2026-10-05' },
+            { id: 1034, colaborador: 'Igor Almeida', area: 'Tecnologia', situacao: 'Em andamento', atualizacao: '2026-10-04' },
+            { id: 1033, colaborador: 'Júlia Mendes', area: 'Pessoas', situacao: 'Pendente', atualizacao: '2026-10-03' },
+            { id: 1032, colaborador: 'Lucas Barros', area: 'Produto Digital', situacao: 'Concluída', atualizacao: '2026-10-02' },
+            { id: 1031, colaborador: 'Marina Lopes', area: 'Operações', situacao: 'Em andamento', atualizacao: '2026-10-01' },
+        ];
+        const normalizeText = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
+        const multiPanel = document.createElement('div');
+        multiPanel.id = 'tabulator-multi-filter';
+        multiPanel.className = 'tabulator-multi-filter';
+        multiPanel.setAttribute('role', 'group');
+        multiPanel.setAttribute('aria-label', 'Opções do filtro');
+        multiPanel.hidden = true;
+        document.body.append(multiPanel);
+        const multiState = { input: null, values: [], selected: new Set(), apply: null, restore: null };
+        const dependentFilters = new Map();
+        let syncingDependentFilters = false;
+        const getCompatibleValues = (table, field) => {
+            const otherFilters = table.getHeaderFilters().filter(filter => filter.field !== field);
+            const compatibleRows = otherFilters.length ? table.searchData(otherFilters) : table.getData();
+            return [...new Set(compatibleRows.map(row => String(row[field] || '')).filter(Boolean))]
+                .sort((first, second) => first.localeCompare(second, 'pt-BR', { numeric: true }));
+        };
+        const syncDependentFilters = table => {
+            if (syncingDependentFilters) return;
+            syncingDependentFilters = true;
+            try {
+                dependentFilters.forEach((filter, field) => {
+                    const compatible = new Set(getCompatibleValues(table, field));
+                    const selectedValues = filter.input.selectedValues.filter(value => compatible.has(value));
+                    if (selectedValues.length !== filter.input.selectedValues.length) {
+                        filter.input.selectedValues = selectedValues;
+                        filter.updateLabel();
+                        filter.apply(selectedValues);
+                    }
+                });
+            } finally {
+                syncingDependentFilters = false;
+            }
+        };
+        const closeMultiFilter = (restoreFocus = false) => {
+            if (multiPanel.hidden) return;
+            const input = multiState.input;
+            multiPanel.hidden = true;
+            input?.setAttribute('aria-expanded', 'false');
+            multiState.restore?.();
+            multiState.input = null;
+            multiState.apply = null;
+            multiState.restore = null;
+            if (restoreFocus) input?.focus();
+        };
+        const positionMultiFilter = () => {
+            if (!multiState.input || multiPanel.hidden) return;
+            const bounds = multiState.input.getBoundingClientRect();
+            const width = Math.max(270, bounds.width);
+            const left = Math.min(Math.max(8, bounds.left), window.innerWidth - width - 8);
+            const panelHeight = Math.min(multiPanel.scrollHeight, window.innerHeight * .6);
+            const fitsBelow = bounds.bottom + panelHeight + 8 <= window.innerHeight;
+            multiPanel.style.left = `${left}px`;
+            multiPanel.style.top = `${fitsBelow ? bounds.bottom + 6 : Math.max(8, bounds.top - panelHeight - 6)}px`;
+            multiPanel.style.width = `${width}px`;
+        };
+        const renderMultiFilter = (term = '') => {
+            multiPanel.replaceChildren();
+            const actions = document.createElement('div');
+            actions.className = 'tabulator-multi-actions';
+            const selectAll = document.createElement('button');
+            selectAll.type = 'button';
+            selectAll.textContent = 'Selecionar tudo';
+            const clear = document.createElement('button');
+            clear.type = 'button';
+            clear.textContent = 'Limpar';
+            actions.append(selectAll, clear);
+            const options = document.createElement('div');
+            options.className = 'tabulator-multi-options';
+            const normalizedTerm = normalizeText(term);
+            const visibleValues = normalizedTerm ? multiState.values.filter(value => normalizeText(value).includes(normalizedTerm)) : multiState.values;
+
+            visibleValues.forEach(value => {
+                const item = document.createElement('label');
+                item.className = 'tabulator-multi-item';
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = multiState.selected.has(value);
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked) multiState.selected.add(value);
+                    else multiState.selected.delete(value);
+                    multiState.apply?.([...multiState.selected]);
+                });
+                item.append(checkbox, document.createTextNode(value));
+                options.append(item);
+            });
+
+            if (!visibleValues.length) {
+                const empty = document.createElement('p');
+                empty.className = 'tabulator-multi-empty';
+                empty.textContent = 'Nenhuma opção encontrada.';
+                options.append(empty);
+            }
+
+            selectAll.addEventListener('click', () => {
+                visibleValues.forEach(value => multiState.selected.add(value));
+                multiState.apply?.([...multiState.selected]);
+                renderMultiFilter(term);
+            });
+            clear.addEventListener('click', () => {
+                multiState.selected.clear();
+                multiState.apply?.([]);
+                renderMultiFilter(term);
+            });
+            multiPanel.append(actions, options);
+            positionMultiFilter();
+        };
+        const headerMultiSelect = (cell, onRendered, success, cancel, params) => {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = params.placeholder || 'Todos';
+            input.setAttribute('aria-label', `Filtrar ${cell.getColumn().getDefinition().title}`);
+            input.setAttribute('aria-controls', multiPanel.id);
+            input.setAttribute('aria-expanded', 'false');
+            input.selectedValues = [];
+            const updateLabel = () => {
+                input.value = input.selectedValues.length ? `${input.selectedValues.length} selecionado(s)` : '';
+            };
+            const open = () => {
+                const column = cell.getColumn();
+                const table = column.getTable();
+                const field = column.getField();
+                multiState.input = input;
+                multiState.values = getCompatibleValues(table, field);
+                multiState.selected = new Set(input.selectedValues);
+                multiState.apply = selectedValues => {
+                    input.selectedValues = selectedValues;
+                    success(selectedValues);
+                };
+                multiState.restore = updateLabel;
+                multiPanel.hidden = false;
+                input.setAttribute('aria-expanded', 'true');
+                renderMultiFilter(input.value);
+            };
+            input.addEventListener('focus', () => {
+                input.value = '';
+                open();
+            });
+            input.addEventListener('click', () => {
+                if (multiState.input !== input || multiPanel.hidden) open();
+            });
+            input.addEventListener('input', () => {
+                if (multiState.input !== input || multiPanel.hidden) open();
+                renderMultiFilter(input.value);
+            });
+            input.addEventListener('keydown', event => {
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    closeMultiFilter(true);
+                }
+            });
+            onRendered(updateLabel);
+            dependentFilters.set(cell.getColumn().getField(), { input, apply: success, updateLabel });
+            return input;
+        };
+        document.addEventListener('mousedown', event => {
+            if (!multiPanel.contains(event.target) && event.target !== multiState.input) closeMultiFilter();
+        });
+        window.addEventListener('resize', positionMultiFilter);
+        window.addEventListener('scroll', positionMultiFilter, true);
+        const dateHeaderFilter = (cell, onRendered, success) => {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.inputMode = 'numeric';
+            input.maxLength = 10;
+            input.placeholder = 'DD/MM/AAAA';
+            input.setAttribute('aria-label', 'Filtrar por data de atualização');
+            input.addEventListener('input', () => {
+                const digits = input.value.replace(/\D/g, '').slice(0, 8);
+                input.value = [digits.slice(0, 2), digits.slice(2, 4), digits.slice(4, 8)].filter(Boolean).join('/');
+                success(input.value);
+            });
+            return input;
+        };
+        const dateFilter = (value, rowValue) => {
+            if (!value) return true;
+            return String(rowValue || '').split('-').reverse().join('/').startsWith(value);
+        };
+        const statusFormatter = cell => {
+            const status = cell.getValue();
+            const badge = document.createElement('span');
+            badge.className = `status ${status === 'Concluída' ? 'status-ativo' : status === 'Pendente' ? 'status-atrasado' : 'status-teste'}`;
+            badge.textContent = status;
+            return badge;
+        };
+
+        try {
+            const table = new window.Tabulator(tableElement, {
+                data: tableData,
+                index: 'id',
+                layout: 'fitColumns',
+                height: 380,
+                pagination: true,
+                paginationMode: 'local',
+                paginationSize: 6,
+                paginationCounter: 'rows',
+                selectable: true,
+                placeholder: 'Nenhum resultado para os filtros informados.',
+                locale: 'pt-br',
+                langs: {
+                    'pt-br': {
+                        pagination: {
+                            first: 'Primeira',
+                            first_title: 'Primeira página',
+                            last: 'Última',
+                            last_title: 'Última página',
+                            prev: 'Anterior',
+                            prev_title: 'Página anterior',
+                            next: 'Próxima',
+                            next_title: 'Próxima página',
+                            page_size: 'Registros por página',
+                            counter: { showing: 'Mostrando', of: 'de', rows: 'registros', pages: 'páginas' },
+                        },
+                    },
+                },
+                columns: [
+                    { formatter: 'rowSelection', titleFormatter: 'rowSelection', width: 48, minWidth: 48, hozAlign: 'center', headerHozAlign: 'center', headerSort: false },
+                    { title: 'Avaliação', field: 'id', width: 125, minWidth: 125, sorter: 'number', formatter: cell => `#${cell.getValue()}`, headerFilter: 'input', headerFilterPlaceholder: 'Filtrar código...' },
+                    { title: 'Colaborador', field: 'colaborador', minWidth: 210, headerFilter: headerMultiSelect, headerFilterParams: { placeholder: 'Filtrar opções...' }, headerFilterFunc: 'in', headerFilterLiveFilter: false, headerFilterEmptyCheck: value => !value || value.length === 0 },
+                    { title: 'Área', field: 'area', minWidth: 180, headerFilter: headerMultiSelect, headerFilterParams: { placeholder: 'Todos' }, headerFilterFunc: 'in', headerFilterLiveFilter: false, headerFilterEmptyCheck: value => !value || value.length === 0 },
+                    { title: 'Situação', field: 'situacao', minWidth: 180, formatter: statusFormatter, headerFilter: headerMultiSelect, headerFilterParams: { placeholder: 'Todos' }, headerFilterFunc: 'in', headerFilterLiveFilter: false, headerFilterEmptyCheck: value => !value || value.length === 0 },
+                    { title: 'Atualização', field: 'atualizacao', width: 145, minWidth: 145, sorter: 'string', formatter: cell => cell.getValue().split('-').reverse().join('/'), headerFilter: dateHeaderFilter, headerFilterFunc: dateFilter, headerFilterLiveFilter: false, headerFilterEmptyCheck: value => !value },
+                ],
+            });
+            table.on('dataFiltered', () => syncDependentFilters(table));
+        } catch (error) {
+            if (fallback) fallback.hidden = false;
+            console.error('Não foi possível iniciar a tabela avançada.', error);
+        }
+    } else if (fallback) {
+        fallback.hidden = false;
+    }
+}
+
 document.querySelectorAll('[data-mock-form]').forEach(form => {
     form.addEventListener('submit', event => {
         event.preventDefault();

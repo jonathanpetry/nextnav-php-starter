@@ -38,6 +38,7 @@ Não crie “só mais uma versão” de componente porque o formato visual parec
 | Formulários | `form-grid`, `form-field`, `check-field`, mensagens e estados de validação |
 | Seleção múltipla | `select[multiple][data-multi-select]` |
 | Listagens | `table-wrap`, tabela nativa, toolbar, rodapé e paginação |
+| Grade avançada | Tabulator local com `$loadTabulator = true`; referência em `componentes.php` |
 | Situação curta | `status` com variante semântica |
 | Retorno ao usuário | `alert`, `form-message`, toast e estado vazio |
 | Contexto complementar | tabs, modal e drawer nativos |
@@ -133,6 +134,14 @@ Use `demo => true` somente em amostras descartáveis. Não marque módulos reais
 O campo nativo continua sendo a fonte de verdade; `selected` define seleção inicial e `disabled` restringe edição. O PHP recebe `$_GET['categorias']` ou `$_POST['categorias']` como array de códigos. Valide o tipo, cada código e a permissão no servidor. Rótulos não são identificadores.
 
 `FormData(form)` funciona sem coleta manual de checkbox. Reset restaura as seleções iniciais do HTML. Alteração por código deve atualizar as opções e emitir `change` para sincronizar o componente. Os selects são aprimorados no carregamento da página; não há inicialização automática de campos inseridos posteriormente por AJAX.
+
+### Tabela avançada com Tabulator
+
+Use tabela HTML para listas pequenas ou conteúdo que precise continuar legível sem JavaScript. Para uma grade com seleção, ordenação, paginação e filtros combinados, defina `$loadTabulator = true` antes de incluir o menu e reutilize a implementação de `componentes.php`.
+
+O filtro múltiplo categórico possui busca, checkboxes, “Selecionar tudo”, “Limpar” e fechamento por clique externo ou `Escape`. As opções e seleções são dependentes dos demais filtros ativos; combinações sem resultado são removidas. Datas visíveis e digitadas seguem `DD/MM/AAAA`, ainda que o valor interno use ISO para ordenação e consulta.
+
+No exemplo, o processamento é local porque existem apenas dados fictícios. Para grande volume ou dados sensíveis, o servidor deve validar filtros, aplicar whitelist de colunas ordenáveis, autorizar a consulta, limitar resultados e executar paginação. Nunca carregue todos os registros no navegador apenas para usar o Tabulator.
 
 Busca ignora acentos; “Selecionar resultados” inclui somente opções filtradas habilitadas; “Limpar tudo” remove todas as opções habilitadas, inclusive fora da busca. Tab navega controles, espaço marca checkbox, setas navegam resultados e Escape fecha o popup. Sem suporte ao popup, permanece o select nativo; o restante do shell exige navegador moderno.
 

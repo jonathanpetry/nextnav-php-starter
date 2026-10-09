@@ -6,6 +6,7 @@ require dirname(__DIR__, 3) . '/app/bootstrap.php';
 
 $pageTitle = 'Componentes';
 $activePage = 'exemplos-componentes';
+$loadTabulator = true;
 
 $options = ['alpha' => 'Opção Alpha', 'beta' => 'Opção Beta', 'gama' => 'Opção Gama', 'delta' => 'Opção Delta', 'epsilon' => 'Opção Epsilon', 'zeta' => 'Opção Zeta'];
 $selectedOptions = [];
@@ -36,7 +37,7 @@ require APP_PATH . '/layout/menu.php';
 </section>
 
 <nav class="catalog-index" aria-label="Seções do catálogo">
-    <a href="#fundacao">Fundação</a><a href="#acoes">Ações</a><a href="#entrada">Entrada</a><a href="#feedback">Feedback</a><a href="#resumo">Resumo</a><a href="#contexto">Contexto</a><a href="#dados">Dados</a>
+    <a href="#fundacao">Fundação</a><a href="#acoes">Ações</a><a href="#entrada">Entrada</a><a href="#feedback">Feedback</a><a href="#resumo">Resumo</a><a href="#contexto">Contexto</a><a href="#dados">Dados</a><a href="#dados-avancados">Dados avançados</a>
 </nav>
 
 <section class="panel catalog-section" id="fundacao">
@@ -145,6 +146,17 @@ require APP_PATH . '/layout/menu.php';
     <div class="table-wrap"><table><thead><tr><th>Registro</th><th>Responsável</th><th>Status</th><th>Atualização</th></tr></thead><tbody><tr><td><strong>Projeto Exemplo Alpha</strong><small>EX-001</small></td><td>Pessoa Exemplo 01</td><td><span class="status status-ativo">Ativo</span></td><td>Hoje, 10:42</td></tr><tr><td><strong>Projeto Exemplo Beta</strong><small>EX-002</small></td><td>Pessoa Exemplo 02</td><td><span class="status status-teste">Em análise</span></td><td>Ontem, 16:18</td></tr></tbody></table></div>
     <div class="table-footer"><span>Mostrando 1–2 de 18</span><div class="pagination"><button disabled>‹</button><button class="is-active" type="button" data-toast-trigger>1</button><button type="button" data-toast-trigger>2</button><button type="button" data-toast-trigger>3</button><button type="button" data-toast-trigger>›</button></div></div>
     <div class="empty-demo"><span>＋</span><strong>Nenhum resultado encontrado</strong><p>Ajuste os filtros ou limpe a busca.</p><button class="button button-secondary" type="button" data-toast-trigger>Limpar filtros</button></div>
+</section>
+
+<section class="panel catalog-section" id="dados-avancados">
+    <div class="example-heading"><span class="eyebrow">09 · DADOS AVANÇADOS</span><h3>Tabela interativa com Tabulator</h3><p>Use quando ordenação, seleção, paginação e filtros combinados justificarem uma grade especializada.</p></div>
+    <div class="alert alert-info tabulator-guidance"><i></i><div><strong>Uso especializado</strong><span>Para grande volume, dados sensíveis ou consultas remotas, filtros e paginação continuam no servidor. O Tabulator não substitui autorização nem limites da consulta.</span></div></div>
+    <div class="tabulator-demo" data-tabulator-demo>
+        <div id="catalog-tabulator" aria-label="Avaliações fictícias com filtros por coluna"></div>
+        <p class="tabulator-fallback" data-tabulator-fallback hidden>Não foi possível carregar a tabela avançada. Use a tabela HTML como alternativa básica.</p>
+        <noscript><p class="tabulator-fallback">Ative o JavaScript para usar a tabela avançada. A tabela HTML do componente 08 continua disponível.</p></noscript>
+    </div>
+    <p class="catalog-footnote">Dados inteiramente fictícios. Filtros e paginação são locais e podem ser combinados.</p>
 </section>
 
 <dialog class="dialog" id="example-dialog" aria-labelledby="example-dialog-title">

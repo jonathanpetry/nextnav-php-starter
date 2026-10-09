@@ -101,6 +101,7 @@ Somente `public/` deve ser exposto pelo servidor web.
 - Dados mock sem persistência; CRUD valida no PHP e mantém registros somente na memória da aba.
 - Relatórios é o módulo de consulta copiável: GET, validação e componentes existentes, sem CSS/JS local.
 - Multiselect com códigos estáveis, campo nativo, envio por formulário, seleção inicial e reset.
+- Tabulator 5.5.4 local, carregado somente quando a página define `$loadTabulator = true`, para grades especializadas com seleção, ordenação, paginação e filtros dependentes.
 - Popups em camada nativa e controles com teclado; revisão visual em navegador continua parte da aceitação.
 - Ações contextuais usam três pontos verticais e opções em dropdown; ações principais permanecem visíveis.
 - Configuração de banco por variáveis de ambiente.
@@ -137,6 +138,7 @@ Credenciais do banco são lidas por `getenv()` em `app/config/database.php`. O a
 - Para consulta copiável, começar por `public/modules/relatorios/index.php`. Para fluxo assíncrono de cadastro, usar `public/modules/exemplos/crud.php` e substituir conscientemente seu armazenamento mock.
 - Catálogo e padrões visuais não devem prometer operações inexistentes; identificar amostras como demonstrações.
 - Não aprovar uma página nova que recrie componente existente, use cor literal evitável ou introduza comportamento global apenas dentro da página.
+- Tabela HTML continua sendo o padrão simples. Tabulator é reservado a grades que realmente precisem de interação avançada; grande volume exige filtros, limites, autorização e paginação no servidor.
 
 ## Loader
 

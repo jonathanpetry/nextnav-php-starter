@@ -47,6 +47,7 @@ public/
   assets/app.css            tokens e componentes visuais
   assets/app.js             comportamento dos componentes
   assets/auth.js            comportamento visual da autenticação
+  assets/vendor/tabulator/  grade avançada local e licença MIT
   modules/clientes/        listagem demonstrativa
   modules/exemplos/        catálogo e CRUD-modelo
   modules/relatorios/      módulo pequeno de consulta com filtros GET
@@ -61,6 +62,8 @@ environment.example         nomes das variáveis; não é carregado
 ```
 
 Somente `public/` deve ser acessível pela web. O projeto não depende de arquivos, conexões ou sessões externas.
+
+A tabela HTML permanece o padrão para listas simples. O catálogo inclui Tabulator 5.5.4 como opção especializada, carregada apenas por páginas que definem `$loadTabulator = true`. O exemplo usa dados locais; em grande volume, filtros, ordenação e paginação devem ser processados no servidor.
 
 ## Configurações que funcionam hoje
 

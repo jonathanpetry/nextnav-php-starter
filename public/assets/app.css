@@ -286,6 +286,46 @@ td small { display: block; margin-top: 3px; color: var(--text-muted); }
 .dialog-drawer { width:min(460px,100vw);height:100dvh;max-height:none;margin:0 0 0 auto;border-radius:var(--radius-lg) 0 0 var(--radius-lg)}.dialog-drawer[open]{display:flex}.dialog-drawer form{width:100%;align-content:start}
 .table-toolbar{display:grid;grid-template-columns:minmax(220px,1fr) 170px auto auto;gap:9px;margin-bottom:14px}.table-toolbar input,.table-toolbar select{min-height:42px;padding:0 11px;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text);background:var(--surface)}.table-footer{display:flex;align-items:center;justify-content:space-between;padding-top:13px;color:var(--text-muted);font-size:10px}.pagination{display:flex;gap:4px}.pagination button{min-width:30px;height:30px;border:1px solid var(--border);border-radius:7px;color:var(--text-muted);background:var(--surface)}.pagination button.is-active{color:var(--on-primary);background:var(--primary);border-color:var(--primary)}.empty-demo{display:flex;align-items:center;flex-direction:column;margin-top:22px;padding:26px;border:1px dashed var(--border);border-radius:var(--radius-md);background:var(--surface-muted);text-align:center}.empty-demo>span{display:grid;width:48px;height:48px;place-items:center;border:1px solid var(--border);border-radius:50%;color:var(--primary);background:var(--surface);font-size:20px}.empty-demo strong{margin-top:10px}.empty-demo p{margin:4px 0 13px;color:var(--text-muted);font-size:11px}
 
+.tabulator-guidance { margin: 0 0 18px; }
+.tabulator-demo { min-width: 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+.tabulator-demo .tabulator { border: 0; background: var(--surface); color: var(--text); font-family: inherit; font-size: 11px; }
+.tabulator-demo .tabulator .tabulator-header { border-bottom: 1px solid var(--border); background: var(--surface-muted); color: var(--text); font-weight: 800; }
+.tabulator-demo .tabulator .tabulator-header .tabulator-col { border-right: 1px solid var(--border); background: var(--surface-muted); }
+.tabulator-demo .tabulator .tabulator-header .tabulator-col:last-child { border-right: 0; }
+.tabulator-demo .tabulator .tabulator-header .tabulator-col.tabulator-sortable:hover { background: var(--primary-soft); }
+.tabulator-demo .tabulator .tabulator-header .tabulator-col .tabulator-col-content { padding: 8px; }
+.tabulator-demo .tabulator .tabulator-header-filter input,
+.tabulator-demo .tabulator .tabulator-header-filter select { display: block; width: 100%; min-height: 34px; box-sizing: border-box; margin: 0; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); background: var(--surface); font: inherit; }
+.tabulator-demo .tabulator .tabulator-header-filter input:focus-visible,
+.tabulator-demo .tabulator .tabulator-header-filter select:focus-visible { border-color: var(--primary); outline: 2px solid var(--primary-border); outline-offset: 1px; }
+.tabulator-demo .tabulator-row { min-height: 48px; border-bottom: 1px solid var(--border); background: var(--surface); color: var(--text); }
+.tabulator-demo .tabulator-row:nth-child(even) { background: var(--surface-muted); }
+.tabulator-demo .tabulator-row:hover { background: var(--primary-soft); }
+.tabulator-demo .tabulator-row.tabulator-selected { background: var(--primary-soft); }
+.tabulator-demo .tabulator-row .tabulator-cell { display: inline-flex; align-items: center; border-right: 1px solid var(--border); padding: 9px 10px; }
+.tabulator-demo .tabulator-row .tabulator-cell:last-child { border-right: 0; }
+.tabulator-demo .tabulator-footer { border-top: 1px solid var(--border); background: var(--surface); color: var(--text-muted); }
+.tabulator-demo .tabulator .tabulator-footer .tabulator-page { min-width: 32px; min-height: 30px; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); background: var(--surface); font: inherit; }
+.tabulator-demo .tabulator .tabulator-footer .tabulator-page:not(.disabled):hover,
+.tabulator-demo .tabulator .tabulator-footer .tabulator-page.active { border-color: var(--primary); color: var(--on-primary); background: var(--primary); }
+.tabulator-demo .tabulator .tabulator-placeholder { color: var(--text-muted); }
+.tabulator-demo input[type="checkbox"], .tabulator-multi-filter input[type="checkbox"] { accent-color: var(--primary); }
+.tabulator-multi-filter { position: fixed; z-index: 160; max-height: min(380px, 60vh); overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-md); color: var(--text); background: var(--surface); font-family: inherit; font-size: 11px; }
+.tabulator-multi-actions { display: flex; gap: 8px; padding: 10px; border-bottom: 1px solid var(--border); }
+.tabulator-multi-actions button { min-height: 30px; padding: 5px 9px; border: 0; border-radius: var(--radius-sm); color: var(--primary); background: var(--primary-soft); font: inherit; font-size: 10px; font-weight: 800; cursor: pointer; }
+.tabulator-multi-actions button:hover, .tabulator-multi-actions button:focus-visible { outline: 2px solid var(--primary-border); outline-offset: 1px; }
+.tabulator-multi-options { max-height: 300px; overflow-y: auto; padding: 6px 0; }
+.tabulator-multi-item { display: flex; min-height: 34px; align-items: center; gap: 9px; padding: 7px 11px; cursor: pointer; }
+.tabulator-multi-item:hover { background: var(--surface-muted); }
+.tabulator-multi-item input { width: 15px; height: 15px; margin: 0; }
+.tabulator-multi-empty { margin: 0; padding: 14px 11px; color: var(--text-muted); }
+.tabulator-fallback { margin: 0; padding: 18px; color: var(--danger); }
+.catalog-footnote { margin: 12px 0 0; color: var(--text-muted); font-size: 10px; }
+html[data-theme="dark"] .tabulator-demo .tabulator-row:hover { background: color-mix(in srgb, var(--primary) 12%, var(--surface)) !important; color: var(--text) !important; }
+html[data-theme="dark"] .tabulator-demo .tabulator-row.tabulator-selected { background: color-mix(in srgb, var(--primary) 18%, var(--surface)) !important; color: var(--text) !important; }
+html[data-theme="dark"] .tabulator-demo .tabulator-row:hover .tabulator-cell,
+html[data-theme="dark"] .tabulator-demo .tabulator-row.tabulator-selected .tabulator-cell { color: inherit !important; }
+
 .pattern-grid, .state-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .state-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .pattern-card, .state-card { padding: 22px; }

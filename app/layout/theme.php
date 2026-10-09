@@ -14,6 +14,9 @@ $brandColors = $appConfig['brand']['colors'];
         }
     })();
 </script>
+<?php if (!empty($loadTabulator)): ?>
+    <link rel="stylesheet" href="<?= APP_URL ?>/assets/vendor/tabulator/tabulator.min.css?v=5.5.4">
+<?php endif; ?>
 <link rel="stylesheet" href="<?= APP_URL ?>/assets/app.css?v=<?= filemtime(PUBLIC_PATH . '/assets/app.css') ?>">
 <style>
     :root {
